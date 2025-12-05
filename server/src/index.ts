@@ -2,6 +2,7 @@ import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
 import authRoutes from "./routes/authRoute";
+import studentRoutes from "./routes/studentRoute";
 
 config({ quiet: true });
 
@@ -17,6 +18,7 @@ app.use(
 );
 
 app.use("/api", authRoutes);
+app.use("/api/student", studentRoutes);
 
 const PORT = process.env.PORT || 4003;
 app.listen(PORT, () => {

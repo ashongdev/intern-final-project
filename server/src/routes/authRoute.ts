@@ -9,6 +9,9 @@ export const registerSchema = z
 	.object({
 		fullName: z.string().min(2, "Full name must be at least 2 characters"),
 		email: z.string().email("Please enter a valid email address"),
+		indexNumber: z
+			.string()
+			.regex(/^\d{10}$/, "Index number must be exactly 10 digits"),
 		password: z.string().min(8, "Password must be at least 8 characters"),
 		confirmPassword: z.string(),
 		role: z.enum(["student", "organization"] as const, {
@@ -21,7 +24,7 @@ export const registerSchema = z
 	});
 
 export const loginSchema = z.object({
-	email: z.string().email("Please enter a valid email address"),
+	email: z.string(),
 	password: z.string().min(1, "Password is required"),
 });
 

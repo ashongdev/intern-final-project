@@ -28,7 +28,7 @@ function createToken(id: string) {
 }
 
 const register = async (req: Request<{}, {}, RegisterInput>, res: Response) => {
-	const { email, fullName, password, role } = req.body;
+	const { email, fullName, password, role, indexNumber } = req.body;
 
 	try {
 		if (role === "student") {
@@ -37,8 +37,8 @@ const register = async (req: Request<{}, {}, RegisterInput>, res: Response) => {
 			const hashedPassword = await hash(password, salt);
 
 			const { rows: studentId } = await pool.query(
-				`INSERT INTO students (email, fullname, password) VALUES ($1, $2, $3) RETURNING id`,
-				[email, fullName, hashedPassword]
+				`INSERT INTO students (index_number, email, fullname, password) VALUES ($1, $2, $3, $4) RETURNING id`,
+				[Number(indexNumber), email, fullName, hashedPassword]
 			);
 
 			if (studentId.length > 0) {
@@ -65,12 +65,12 @@ const register = async (req: Request<{}, {}, RegisterInput>, res: Response) => {
 };
 
 const login = async (req: Request<{}, {}, RegisterInput>, res: Response) => {
-	const { email, fullName, password, role } = req.body;
+	const { email, password, role } = req.body;
 
 	try {
 		// if (role === "student") {
 		const { rows: details } = await pool.query(
-			`SELECT id, password FROM students WHERE email = $1`,
+			`SELECT id, password FROM students WHERE email = $1 OR index_number = $1`,
 			[email]
 		);
 

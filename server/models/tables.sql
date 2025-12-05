@@ -12,6 +12,7 @@ CREATE TABLE students (
    email VARCHAR(50) NOT NULL UNIQUE,
    phone VARCHAR(10) UNIQUE,
    faculty INT,
+   index_number VARCHAR(20) UNIQUE NOT NULL,
    fullname TEXT NOT NULL,
    programme VARCHAR(30) UNIQUE,
    level LEVEL,
@@ -24,12 +25,6 @@ CREATE TABLE students (
 
    FOREIGN KEY (faculty) REFERENCES faculty (id)
 );
-
-ALTER TABLE students
-ALTER COLUMN phone TYPE VARCHAR(10),
-ALTER COLUMN phone SET DEFAULT NULL;
-
-
 
 CREATE TYPE THEME AS ENUM ('dark', 'light');
 

@@ -3,22 +3,10 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { pool } from "../dbConfig";
+import { handleError } from "../exports/export";
 import { registerSchema } from "../routes/authRoute";
 
 type RegisterInput = z.infer<typeof registerSchema>;
-
-export const handleSuccess = (res: Response, message: string, data?: any) => {
-	return res.status(200).json({ success: true, message, data });
-};
-
-export const handleError = (
-	res: Response,
-	message: string,
-	errors?: any,
-	statusCode = 400
-) => {
-	return res.status(statusCode).json({ success: false, message, errors });
-};
 
 const JWT_SECRET = process.env.JWT_SECRET;
 function createToken(id: string) {
@@ -32,6 +20,7 @@ const register = async (req: Request<{}, {}, RegisterInput>, res: Response) => {
 
 	try {
 		if (role === "student") {
+			await pool.query(`DELETE FROM letter_requests`);
 			await pool.query(`DELETE FROM students`);
 			const salt = await genSalt(12);
 			const hashedPassword = await hash(password, salt);

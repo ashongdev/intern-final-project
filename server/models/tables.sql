@@ -52,7 +52,7 @@ CREATE TABLE letter_requests (
    organization_name TEXT,
    created_at TIMESTAMPTZ DEFAULT NOW(),
    updated_at TIMESTAMPTZ DEFAULT NOW(),
-
+   status VARCHAR(10) CHECK (status IN ('Pending', 'Sent', 'Cancelled')) DEFAULT 'Pending',
    FOREIGN KEY (student_id) REFERENCES students (index_number)
 );
 

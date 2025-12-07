@@ -21,7 +21,7 @@ const submitLetterRequest = async (
 	try {
 		console.log(req.body);
 		await client.query(`BEGIN`);
-		await client.query(`DELETE FROM letter_requests`);
+		// await client.query(`DELETE FROM letter_requests`);
 		await client.query(
 			`INSERT INTO letter_requests
             (student_id, internship_type, start_date, end_date, additonal_notes, organization_name)

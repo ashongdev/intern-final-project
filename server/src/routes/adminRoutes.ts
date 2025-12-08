@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { fetchLetterRequests } from "../controllers/adminController";
+import {
+	fetchLetterRequests,
+	fetchStudentsList,
+} from "../controllers/adminController";
 
 const router = Router();
 
 router.get("/letters", fetchLetterRequests);
+router.get("/students", fetchStudentsList);
 
 export default router;

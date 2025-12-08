@@ -19,7 +19,6 @@ const submitLetterRequest = async (
 
 	const client = await pool.connect();
 	try {
-		console.log(req.body);
 		await client.query(`BEGIN`);
 		// await client.query(`DELETE FROM letter_requests`);
 		await client.query(

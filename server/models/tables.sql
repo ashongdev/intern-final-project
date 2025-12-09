@@ -119,3 +119,34 @@ CREATE TABLE supervisors (
 
    FOREIGN KEY (organization_id) REFERENCES organizations (id)
 );
+
+CREATE TABLE student_notifications (
+   id SERIAL PRIMARY KEY,
+   student_id VARCHAR(20) NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (student_id) REFERENCES students (index_number)
+);
+
+drop TABLE student_notifications;
+CREATE TABLE admin_notifications (
+   id SERIAL PRIMARY KEY,
+   admin_id INT NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (admin_id) REFERENCES students (id)
+);
+
+CREATE TABLE supervisor_notifications (
+   id SERIAL PRIMARY KEY,
+   supervisor_id INT NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (supervisor_id) REFERENCES supervisors (id)
+);

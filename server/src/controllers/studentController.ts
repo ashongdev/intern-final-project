@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import path from "path";
 import z from "zod";
 import { pool } from "../dbConfig";
-import { handleSuccess } from "../exports/export";
+import { handleError, handleSuccess } from "../exports/export";
 import { AuthenticatedRequest } from "../middleware/auth";
 import { letterRequestSchema } from "../routes/studentRoute";
 
-const submitLetterRequest = async (
+const requestLetter = async (
 	req: Request<{}, {}, z.infer<typeof letterRequestSchema>>,
 	res: Response
 ) => {
@@ -49,8 +49,55 @@ const submitLetterRequest = async (
 		await client.query(`ROLLBACK`);
 
 		console.log("🚀 ---------------------------------------🚀");
-		console.log("🚀 ~ submitLetterRequest ~ error:", error);
+		console.log("🚀 ~ requestLetter ~ error:", error);
 		console.log("🚀 ---------------------------------------🚀");
+	}
+};
+
+const submitInternshipLetter = async (
+	req: AuthenticatedRequest,
+	res: Response
+) => {
+	const { organizationEmail, additionalNotes, organizationName } =
+		req.body.data;
+	const studentId = req.user;
+
+	const client = await pool.connect();
+	try {
+		await client.query(`BEGIN`);
+
+		// Fetch organization's id
+		const { rows: orgId } = await pool.query(
+			`SELECT id FROM organizations WHERE email = $1`,
+			[organizationEmail]
+		);
+
+		if (orgId.length < 1) {
+			return handleError(
+				res,
+				"No organization with such email found on our system",
+				{},
+				404
+			);
+		}
+
+		await client.query(
+			`INSERT INTO internship_requests
+            (student_id, organization_id)
+         VALUES ($1, $2)`,
+			[studentId, orgId[0].id]
+		);
+
+		// Update current step
+		await client.query(
+			`UPDATE user_step SET current_step = 3 WHERE student_id = $1`,
+			[Number(studentId)]
+		);
+		await client.query(`COMMIT`);
+
+		handleSuccess(res, "Letter Request Submitted");
+	} catch (error) {
+		await client.query(`ROLLBACK`);
 	}
 };
 
@@ -109,4 +156,9 @@ const fetchLetterData = async (req: AuthenticatedRequest, res: Response) => {
 	}
 };
 
-export { fetchLetterData, fetchRequestsHistory, submitLetterRequest };
+export {
+	fetchLetterData,
+	fetchRequestsHistory,
+	requestLetter,
+	submitInternshipLetter,
+};

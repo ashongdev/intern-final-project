@@ -3,7 +3,8 @@ import { z } from "zod";
 import {
 	fetchLetterData,
 	fetchRequestsHistory,
-	submitLetterRequest,
+	requestLetter,
+	submitInternshipLetter,
 } from "../controllers/studentController";
 import { checkUser, requireAuth } from "../middleware/auth";
 
@@ -45,11 +46,9 @@ router.use((req, res, next) => {
 	checkUser(req, res, next);
 });
 
-router.post(
-	"/submit-letter",
-	validate(letterRequestSchema),
-	submitLetterRequest
-);
+router.post("/submit-letter", validate(letterRequestSchema), requestLetter);
+
+router.post("/submit-internship-letter", submitInternshipLetter);
 router.get("/letter-history", requireAuth, fetchRequestsHistory);
 router.get("/letter/:id", requireAuth, fetchLetterData);
 

@@ -52,7 +52,7 @@ CREATE TABLE letter_requests (
    organization_name TEXT,
    created_at TIMESTAMPTZ DEFAULT NOW(),
    updated_at TIMESTAMPTZ DEFAULT NOW(),
-
+   status VARCHAR(10) CHECK (status IN ('Pending', 'Sent', 'Cancelled')) DEFAULT 'Pending',
    FOREIGN KEY (student_id) REFERENCES students (index_number)
 );
 
@@ -78,3 +78,75 @@ CREATE TRIGGER insert_current_step
 AFTER INSERT ON students
 FOR EACH ROW
 EXECUTE FUNCTION insert_current_step();
+
+CREATE TABLE organizations (
+   id SERIAL PRIMARY KEY,
+   email VARCHAR(50) NOT NULL UNIQUE,
+   phone VARCHAR(10) UNIQUE,
+   name TEXT NOT NULL,
+   BIO TEXT,
+   avatar TEXT,
+   password TEXT NOT NULL,
+   is_profile_completed BOOLEAN DEFAULT false,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TYPE INTERNSHIP_STATUS AS ENUM ('pending', 'accepted', 'rejected');
+CREATE TABLE internship_requests (
+   id SERIAL PRIMARY KEY,
+   student_id VARCHAR(20) NOT NULL,
+   organization_id INT,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   status INTERNSHIP_STATUS DEFAULT 'pending',
+   FOREIGN KEY (student_id) REFERENCES students (index_number),
+   FOREIGN KEY (organization_id) REFERENCES organizations (id)
+);
+
+CREATE TABLE supervisors (
+   id SERIAL PRIMARY KEY,
+   email VARCHAR(50) NOT NULL UNIQUE,
+   phone VARCHAR(10) UNIQUE,
+   organization_id INT NOT NULL,
+   fullname TEXT NOT NULL,
+   BIO TEXT,
+   avatar TEXT,
+   password TEXT NOT NULL,
+   is_profile_completed BOOLEAN DEFAULT false,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+
+   FOREIGN KEY (organization_id) REFERENCES organizations (id)
+);
+
+CREATE TABLE student_notifications (
+   id SERIAL PRIMARY KEY,
+   student_id VARCHAR(20) NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (student_id) REFERENCES students (index_number)
+);
+
+drop TABLE student_notifications;
+CREATE TABLE admin_notifications (
+   id SERIAL PRIMARY KEY,
+   admin_id INT NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (admin_id) REFERENCES students (id)
+);
+
+CREATE TABLE supervisor_notifications (
+   id SERIAL PRIMARY KEY,
+   supervisor_id INT NOT NULL,
+   content TEXT,
+   subject TEXT NOT NULL,
+   created_at TIMESTAMPTZ DEFAULT NOW(),
+   updated_at TIMESTAMPTZ DEFAULT NOW(),
+   FOREIGN KEY (supervisor_id) REFERENCES supervisors (id)
+);

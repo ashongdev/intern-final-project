@@ -37,7 +37,7 @@ const fetchStudentsList = async (_: Request, res: Response) => {
 };
 
 const letterApproval = async (req: Request, res: Response) => {
-	const { status, student_id } = req.body;
+	const { status, studentId } = req.body;
 
 	const client = await pool.connect();
 
@@ -69,12 +69,12 @@ const letterApproval = async (req: Request, res: Response) => {
 		await client.query(`DELETE FROM student_notifications`);
 		const { rows: letterId } = await client.query(
 			`UPDATE letter_requests SET status = $1, updated_at = NOW() WHERE student_id = $2 RETURNING id`,
-			[notificationInfo?.status, student_id]
+			[notificationInfo?.status, studentId]
 		);
 		await client.query(
 			`INSERT INTO student_notifications (student_id, content, subject)
 			VALUES ($1, $2, $3)`,
-			[student_id, notificationInfo?.content, notificationInfo?.subject]
+			[studentId, notificationInfo?.content, notificationInfo?.subject]
 		);
 		await client.query(`COMMIT`);
 		handleSuccess(res, notificationInfo?.subject! || "Success", {

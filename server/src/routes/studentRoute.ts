@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { z } from "zod";
-import { submitLetterRequest } from "../controllers/studentController";
+import {
+	fetchLetterData,
+	fetchRequestsHistory,
+	submitLetterRequest,
+} from "../controllers/studentController";
+import { checkUser, requireAuth } from "../middleware/auth";
 
 const router = Router();
 
@@ -36,10 +41,16 @@ export const validate =
 		}
 	};
 
+router.use((req, res, next) => {
+	checkUser(req, res, next);
+});
+
 router.post(
 	"/submit-letter",
 	validate(letterRequestSchema),
 	submitLetterRequest
 );
+router.get("/letter-history", requireAuth, fetchRequestsHistory);
+router.get("/letter/:id", requireAuth, fetchLetterData);
 
 export default router;

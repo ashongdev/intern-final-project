@@ -1,9 +1,12 @@
 import cors from "cors";
 // import Docxtemplater from "docxtemplater";
+import cookieParser from "cookie-parser";
+
 import { config } from "dotenv";
 import express from "express";
 // import fs from "fs";
 // import PizZip from "pizzip";
+import path from "path";
 import adminRoutes from "./routes/adminRoutes";
 import authRoutes from "./routes/authRoute";
 import studentRoutes from "./routes/studentRoute";
@@ -12,6 +15,8 @@ config({ quiet: true });
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+app.use("/docs", express.static(path.join(__dirname, "docs")));
 
 app.use(
 	cors({

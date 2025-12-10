@@ -9,6 +9,7 @@ import express from "express";
 import path from "path";
 import adminRoutes from "./routes/adminRoutes";
 import authRoutes from "./routes/authRoute";
+import orgRoutes from "./routes/orgRoute";
 import studentRoutes from "./routes/studentRoute";
 
 config({ quiet: true });
@@ -65,6 +66,7 @@ app.use((req, _, next) => {
 app.use("/api", authRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/org", orgRoutes);
 
 const PORT = process.env.PORT || 4003;
 app.listen(PORT, () => {

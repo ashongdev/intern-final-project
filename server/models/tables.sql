@@ -14,7 +14,7 @@ CREATE TABLE students (
    faculty INT,
    index_number VARCHAR(20) UNIQUE NOT NULL,
    fullname TEXT NOT NULL,
-   programme VARCHAR(30) UNIQUE,
+   programme VARCHAR(30),
    level LEVEL,
    BIO TEXT,
    avatar TEXT,

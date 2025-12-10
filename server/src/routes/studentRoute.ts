@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { z } from "zod";
 import {
+	fetchLatestSubmission,
 	fetchLetterData,
 	fetchRequestsHistory,
 	requestLetter,
@@ -51,5 +52,6 @@ router.post("/submit-letter", validate(letterRequestSchema), requestLetter);
 router.post("/submit-internship-letter", submitInternshipLetter);
 router.get("/letter-history", requireAuth, fetchRequestsHistory);
 router.get("/letter/:id", requireAuth, fetchLetterData);
+router.get("/latest-submission", requireAuth, fetchLatestSubmission);
 
 export default router;
